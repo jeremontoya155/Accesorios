@@ -29,6 +29,7 @@ router.get('/', (req, res) => {
 });
 
 // Ruta para buscar productos por ID o código de barras
+// Ruta para buscar productos por ID o código de barras
 router.get('/buscar', async (req, res) => {
     const { ids, codebars } = req.query;
     let query = 'SELECT * FROM productos WHERE 1=1';  // Empezamos con una consulta siempre válida
@@ -47,12 +48,19 @@ router.get('/buscar', async (req, res) => {
     if (codebars) {
         const codebarArray = codebars.split(',').map(codebar => codebar.trim()).filter(codebar => codebar !== '');
         if (codebarArray.length > 0) {
-            if (params.length > 0) {
-                query += ` AND codebar = ANY($2::varchar[])`;
-            } else {
-                query += ` AND codebar = ANY($1::varchar[])`;
+            // Buscar primero los idproducto asociados a los codebars
+            try {
+                const resultCodebars = await pool.query(`SELECT DISTINCT idproducto FROM productos WHERE codebar = ANY($1::varchar[])`, [codebarArray]);
+
+                if (resultCodebars.rows.length > 0) {
+                    const idproductoArray = resultCodebars.rows.map(row => row.idproducto);
+                    query += ` AND idproducto = ANY($${params.length + 1}::bigint[])`;
+                    params.push(idproductoArray);
+                }
+            } catch (err) {
+                console.error('Error al buscar productos por código de barras:', err);
+                return res.status(500).send('Error al buscar productos por código de barras');
             }
-            params.push(codebarArray);
         }
     }
 
