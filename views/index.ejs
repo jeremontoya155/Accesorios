@@ -17,31 +17,35 @@
         h1, h2 {
             color: #34495e;
             font-weight: 600;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        /* Layout para secciones */
         .main-container {
             display: flex;
             flex-wrap: wrap;
-            gap: 30px;
+            gap: 50px;
             justify-content: space-between;
         }
 
         .sidebar {
             flex: 1;
-            min-width: 250px;
+            min-width: 350px;
+            padding: 20px;
+            background-color: #fdfdfd;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .content {
             flex: 2;
-            min-width: 400px;
+            min-width: 600px;
+            padding: 20px;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 40px;
         }
 
         .form-label {
@@ -52,7 +56,7 @@
 
         .form-control {
             font-size: 1.1rem;
-            padding: 10px 15px;
+            padding: 12px 18px;
             border-radius: 12px;
             border: none;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -66,13 +70,13 @@
 
         .btn {
             font-size: 1.1rem;
-            padding: 12px 24px;
+            padding: 14px 30px;
             border-radius: 50px;
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.4s ease;
             width: 100%;
-            margin-bottom: 20px; /* Espaciado entre los botones */
+            margin-bottom: 25px;
         }
 
         .btn-primary {
@@ -108,7 +112,6 @@
             box-shadow: 0 8px 16px rgba(149, 165, 166, 0.3);
         }
 
-        /* Tooltip para hover en los botones */
         .btn[title]:hover::after {
             content: attr(title);
             position: absolute;
@@ -128,7 +131,7 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
             background-color: white;
             padding: 20px;
-            margin-top: 30px; /* Separación entre los botones y la tabla */
+            margin-top: 50px;
         }
 
         table {
@@ -144,7 +147,7 @@
         }
 
         table th, table td {
-            padding: 16px;
+            padding: 18px;
             font-size: 1.1rem;
             text-align: center;
         }
@@ -165,7 +168,7 @@
             }
 
             .btn {
-                margin-bottom: 15px;
+                margin-bottom: 20px;
             }
         }
     </style>
@@ -174,9 +177,7 @@
     <div class="container mt-5">
         <h1>Gestión de Productos</h1>
 
-        <!-- Contenedor principal que separa filtros/botones y la tabla de resultados -->
         <div class="main-container">
-            <!-- Barra lateral con filtros y botones -->
             <div class="sidebar">
                 <!-- Formulario para buscar productos por IDs o Códigos de Barras -->
                 <form action="/productos/buscar" method="GET" class="mb-4">
@@ -188,7 +189,7 @@
                         <label for="codebars" class="form-label">Buscar por Códigos de Barras (separados por comas):</label>
                         <input type="text" id="codebars" name="codebars" class="form-control" placeholder="Ejemplo: 12345,67890" value="<%= codebars %>">
                     </div>
-                    <button type="submit" class="btn btn-primary mb-4" title="Busca productos por ID o Código de Barras">Buscar Productos</button>
+                    <button type="submit" class="btn btn-primary" title="Busca productos por ID o Código de Barras">Buscar Productos</button>
                 </form>
 
                 <!-- Formulario para subir archivo Excel -->
@@ -203,12 +204,15 @@
 
                 <!-- Botones para descargar productos -->
                 <div class="button-group">
+                    <form action="/productos/descargar-filtrados" method="POST">
+                        <input type="hidden" name="productos" value='<%= JSON.stringify(productos) %>'>
+                        <button type="submit" class="btn btn-secondary" title="Descarga solo los productos filtrados">Descargar Resultados Filtrados</button>
+                    </form>
                     <a href="/productos/descargar-todo" class="btn btn-secondary" title="Descarga todos los productos en un archivo Excel">Descargar Todos los Productos</a>
-                    <a href="/productos/descargar-excel?ids=<%= ids %>&codebars=<%= codebars %>" class="btn btn-secondary" title="Descarga solo los productos filtrados">Descargar Resultados Filtrados</a>
                 </div>
+                
             </div>
 
-            <!-- Contenido de la tabla de resultados -->
             <div class="content">
                 <h2 class="mb-3">Resultados</h2>
                 <div class="table-container">
